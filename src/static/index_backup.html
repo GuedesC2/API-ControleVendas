@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Vendas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-top: 10px;
+        }
+
+        .report-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .report-output {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            margin-top: 15px;
+        }
+
+        .sales-list {
+            background: white;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .sales-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .sales-item:hover {
+            background: #f8f9fa;
+        }
+
+        .sales-item:last-child {
+            border-bottom: none;
+        }
+
+        .sales-info {
+            flex: 1;
+        }
+
+        .sales-info strong {
+            color: #495057;
+        }
+
+        .sales-value {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .produto-item {
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .produto-item:hover {
+            background: #f8f9fa;
+            border-color: #4facfe;
+        }
+
+        .produto-item.selected {
+            background: #e3f2fd;
+            border-color: #4facfe;
+        }
+
+        .produto-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .produto-nome {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .produto-detalhes {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-section,
+            .report-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Controle de Vendas</h1>
+            <p>Gerencie suas vendas e acompanhe suas metas de forma simples e eficiente</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2>⚙️ Configuração de Produtos</h2>
+                
+                <div id="config-alert-container"></div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #495057; margin-bottom: 15px;">📊 Produtos Cadastrados</h3>
+                    <div id="produtosList" style="max-height: 200px; overflow-y: auto;">
+                        <!-- Produtos serão carregados aqui -->
+                    </div>
+                </div>
+
+                <form id="produtoForm" style="border-top: 2px solid #e9ecef; padding-top: 20px;">
+                    <h3 style="color: #495057; margin-bottom: 15px;">✏️ Editar Produto</h3>
+                    
+                    <input type="hidden" id="produtoId" name="produtoId">
+                    
+                    <div class="form-group">
+                        <label for="produtoNome">Nome do Produto:</label>
+                        <input type="text" id="produtoNome" name="produtoNome" required placeholder="Nome do produto" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="produtoMeta">Meta:</label>
+                        <input type="number" id="produtoMeta" name="produtoMeta" step="0.01" min="0" required placeholder="0,00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="produtoPonderador">Ponderador:</label>
+                        <input type="number" id="produtoPonderador" name="produtoPonderador" step="0.01" min="0" required placeholder="1,00">
+                    </div>
+
+                    <button type="submit" class="btn">💾 Atualizar Produto</button>
+                    <button type="button" class="btn btn-secondary" onclick="cancelarEdicao()">❌ Cancelar</button>
+                </form>
+            </div>
+
+            <div class="form-section">
+                <h2>📝 Nova Venda</h2>
+                
+                <div id="alert-container"></div>
+                
+                <form id="vendaForm">
+                    <div class="form-group">
+                        <label for="cliente">Nome do Cliente:</label>
+                        <input type="text" id="cliente" name="cliente" required placeholder="Digite o nome do cliente">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data">Data:</label>
+                        <input type="date" id="data" name="data" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="produto">Produto:</label>
+                        <select id="produto" name="produto" required>
+                            <option value="">Selecione um produto</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="valor">Valor:</label>
+                        <input type="number" id="valor" name="valor" step="0.01" min="0" required placeholder="0,00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="valorTotal">Valor Total:</label>
+                        <input type="number" id="valorTotal" name="valorTotal" step="0.01" readonly placeholder="Calculado automaticamente">
+                    </div>
+
+                    <button type="submit" class="btn">💾 Registrar Venda</button>
+                </form>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processando...</p>
+                </div>
+
+                <h3 style="margin-top: 30px; color: #495057;">📊 Vendas Recentes</h3>
+                <div class="sales-list" id="salesList">
+                    <!-- Vendas serão carregadas aqui -->
+                </div>
+            </div>
+
+            <div class="report-section">
+                <h2>📈 Relatório de Performance</h2>
+                <button class="btn" onclick="gerarRelatorio()">🔄 Atualizar Relatório</button>
+                <button class="btn btn-secondary" onclick="copiarRelatorio()">📋 Copiar para WhatsApp/Email</button>
+                
+                <div class="report-output" id="reportOutput">
+                    Clique em "Atualizar Relatório" para ver os dados atualizados...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração da API
+        const API_BASE = '/api';
+
+        // Elementos do DOM
+        const vendaForm = document.getElementById('vendaForm');
+        const produtoSelect = document.getElementById('produto');
+        const valorInput = document.getElementById('valor');
+        const valorTotalInput = document.getElementById('valorTotal');
+        const salesList = document.getElementById('salesList');
+        const reportOutput = document.getElementById('reportOutput');
+        const alertContainer = document.getElementById('alert-container');
+        const loading = document.getElementById('loading');
+
+        // Dados dos produtos
+        let produtos = [];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data atual
+            docu        // Variáveis globais
+        let produtos = [];
+        let vendas = [];
+        let produtoSelecionado = null;
+
+        // Carregar dados iniciais
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarProdutos();
+            carregarVendas();
+            atualizarRelatorio();
+            
+            // Configurar data atual
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('data').value = hoje;
+        });
+
+        // Função para carregar produtos
+        async function carregarProdutos() {
+            try {
+                const response = await fetch('/api/produtos');
+                produtos = await response.json();
+                
+                // Atualizar dropdown de produtos na seção de vendas
+                const select = document.getElementById('produto');
+                select.innerHTML = '<option value="">Selecione um produto</option>';
+                produtos.forEach(produto => {
+                    const option = document.createElement('option');
+                    option.value = produto.id;
+                    option.textContent = produto.nome;
+                    select.appendChild(option);
+                });
+
+                // Atualizar lista de produtos na seção de configuração
+                atualizarListaProdutos();
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+            }
+        }
+
+        // Função para atualizar lista de produtos na configuração
+        function atualizarListaProdutos() {
+            const container = document.getElementById('produtosList');
+            container.innerHTML = '';
+
+            produtos.forEach(produto => {
+                const div = document.createElement('div');
+                div.className = 'produto-item';
+                div.onclick = () => selecionarProduto(produto);
+                
+                div.innerHTML = `
+                    <div class="produto-info">
+                        <div class="produto-nome">${produto.nome}</div>
+                    </div>
+                    <div class="produto-detalhes">
+                        Meta: ${formatarMoeda(produto.meta)} | Ponderador: ${produto.ponderador}
+                    </div>
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        // Função para selecionar produto para edição
+        function selecionarProduto(produto) {
+            // Remover seleção anterior
+            document.querySelectorAll('.produto-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            // Adicionar seleção atual
+            event.target.closest('.produto-item').classList.add('selected');
+
+            // Preencher formulário
+            document.getElementById('produtoId').value = produto.id;
+            document.getElementById('produtoNome').value = produto.nome;
+            document.getElementById('produtoMeta').value = produto.meta;
+            document.getElementById('produtoPonderador').value = produto.ponderador;
+
+            produtoSelecionado = produto;
+        }
+
+        // Função para cancelar edição
+        function cancelarEdicao() {
+            document.getElementById('produtoForm').reset();
+            document.querySelectorAll('.produto-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            produtoSelecionado = null;
+        }
+
+        // Função para atualizar produto
+        document.getElementById('produtoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!produtoSelecionado) {
+                mostrarAlerta('Selecione um produto para editar.', 'warning', 'config-alert-container');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const dados = {
+                meta: parseFloat(formData.get('produtoMeta')),
+                ponderador: parseFloat(formData.get('produtoPonderador'))
+            };
+
+            try {
+                const response = await fetch(`/api/produtos/${produtoSelecionado.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                if (response.ok) {
+                    mostrarAlerta('Produto atualizado com sucesso!', 'success', 'config-alert-container');
+                    carregarProdutos();
+                    cancelarEdicao();
+                    atualizarRelatorio();
+                } else {
+                    throw new Error('Erro ao atualizar produto');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarAlerta('Erro ao atualizar produto.', 'error', 'config-alert-container');
+            }
+        });       async function carregarVendas() {
+            try {
+                const response = await fetch(`${API_BASE}/vendas`);
+                const vendas = await response.json();
+                
+                salesList.innerHTML = '';
+                
+                if (vendas.length === 0) {
+                    salesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #6c757d;">Nenhuma venda registrada ainda</div>';
+                    return;
+                }
+
+                vendas.slice(-10).reverse().forEach(venda => {
+                    const vendaElement = document.createElement('div');
+                    vendaElement.className = 'sales-item';
+                    vendaElement.innerHTML = `
+                        <div class="sales-info">
+                            <strong>${venda.cliente ? venda.cliente.nome : 'Cliente não encontrado'}</strong><br>
+                            <small>${venda.produto ? venda.produto.nome : 'Produto não encontrado'} - ${new Date(venda.data).toLocaleDateString('pt-BR')}</small>
+                        </div>
+                        <div>
+                            <div class="sales-value">R$ ${venda.valor_total.toFixed(2).replace('.', ',')}</div>
+                            <button class="delete-btn" onclick="excluirVenda(${venda.id})">🗑️</button>
+                        </div>
+                    `;
+                    salesList.appendChild(vendaElement);
+                });
+            } catch (error) {
+                mostrarAlerta('Erro ao carregar vendas: ' + error.message, 'error');
+            }
+        }
+
+        async function registrarVenda(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(vendaForm);
+            const clienteNome = formData.get('cliente');
+            const produtoId = formData.get('produto');
+            const data = formData.get('data');
+            const valor = parseFloat(formData.get('valor'));
+
+            if (!clienteNome || !produtoId || !data || !valor) {
+                mostrarAlerta('Por favor, preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+
+            mostrarLoading(true);
+
+            try {
+                // Primeiro, criar ou buscar o cliente
+                let cliente = await buscarOuCriarCliente(clienteNome);
+
+                // Registrar a venda
+                const vendaData = {
+                    cliente_id: cliente.id,
+                    produto_id: parseInt(produtoId),
+                    data: data,
+                    valor: valor
+                };
+
+                const response = await fetch(`${API_BASE}/vendas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(vendaData)
+                });
+
+                if (response.ok) {
+                    mostrarAlerta('Venda registrada com sucesso!', 'success');
+                    vendaForm.reset();
+                    document.getElementById('data').valueAsDate = new Date();
+                    valorTotalInput.value = '';
+                    carregarVendas();
+                    gerarRelatorio();
+                } else {
+                    const error = await response.json();
+                    mostrarAlerta('Erro ao registrar venda: ' + error.error, 'error');
+                }
+            } catch (error) {
+                mostrarAlerta('Erro ao registrar venda: ' + error.message, 'error');
+            } finally {
+                mostrarLoading(false);
+            }
+        }
+
+        async function buscarOuCriarCliente(nomeCliente) {
+            try {
+                // Buscar clientes existentes
+                const response = await fetch(`${API_BASE}/clientes`);
+                const clientes = await response.json();
+                
+                // Verificar se o cliente já existe
+                const clienteExistente = clientes.find(c => 
+                    c.nome.toLowerCase() === nomeCliente.toLowerCase()
+                );
+
+                if (clienteExistente) {
+                    return clienteExistente;
+                }
+
+                // Criar novo cliente
+                const novoClienteResponse = await fetch(`${API_BASE}/clientes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nome: nomeCliente })
+                });
+
+                return await novoClienteResponse.json();
+            } catch (error) {
+                throw new Error('Erro ao processar cliente: ' + error.message);
+            }
+        }
+
+        async function excluirVenda(vendaId) {
+            if (!confirm('Tem certeza que deseja excluir esta venda?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/vendas/${vendaId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    mostrarAlerta('Venda excluída com sucesso!', 'success');
+                    carregarVendas();
+                    gerarRelatorio();
+                } else {
+                    mostrarAlerta('Erro ao excluir venda.', 'error');
+                }
+            } catch (error) {
+                mostrarAlerta('Erro ao excluir venda: ' + error.message, 'error');
+            }
+        }
+
+        async function gerarRelatorio() {
+            try {
+                const response = await fetch(`${API_BASE}/relatorio/texto`);
+                const data = await response.json();
+                reportOutput.textContent = data.texto;
+            } catch (error) {
+                reportOutput.textContent = 'Erro ao gerar relatório: ' + error.message;
+            }
+        }
+
+        function calcularValorTotal() {
+            const produtoSelecionado = produtoSelect.selectedOptions[0];
+            const valor = parseFloat(valorInput.value) || 0;
+
+            if (produtoSelecionado && produtoSelecionado.dataset.ponderador) {
+                const ponderador = parseFloat(produtoSelecionado.dataset.ponderador);
+                const valorTotal = valor * ponderador;
+                valorTotalInput.value = valorTotal.toFixed(2);
+            } else {
+                valorTotalInput.value = '';
+            }
+        }
+
+        function copiarRelatorio() {
+            const texto = reportOutput.textContent;
+            navigator.clipboard.writeText(texto).then(() => {
+                mostrarAlerta('Relatório copiado para a área de transferência!', 'success');
+            }).catch(() => {
+                mostrarAlerta('Erro ao copiar relatório. Tente selecionar e copiar manualmente.', 'error');
+            });
+        }
+
+        function mostrarAlerta(mensagem, tipo) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${tipo}`;
+            alertDiv.textContent = mensagem;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function mostrarLoading(show) {
+            loading.style.display = show ? 'block' : 'none';
+            vendaForm.style.display = show ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>
+
